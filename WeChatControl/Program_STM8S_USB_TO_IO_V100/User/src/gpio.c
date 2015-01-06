@@ -1,0 +1,23 @@
+#include "stm8s.h"
+#include "iostm8s003f3.h"
+#include "gpio.h"
+
+
+void Init_GPIO(void)
+{
+    //UART IO INIT
+    GPIO_Init(GPIOD,GPIO_PIN_5,GPIO_MODE_OUT_PP_LOW_FAST);
+    GPIO_Init(GPIOD,GPIO_PIN_6,GPIO_MODE_IN_FL_NO_IT);
+    
+    //LED IO INIT
+    GPIO_Init(GPIOA,GPIO_PIN_1,GPIO_MODE_OUT_PP_LOW_FAST);
+    GPIO_Init(GPIOA,GPIO_PIN_2,GPIO_MODE_OUT_PP_LOW_FAST);
+    GPIO_Init(GPIOA,GPIO_PIN_3,GPIO_MODE_OUT_PP_LOW_FAST);
+    
+    //KEY IO INIT
+    GPIO_Init(GPIOC,GPIO_PIN_3,GPIO_MODE_IN_PU_IT);  
+    EXTI_SetExtIntSensitivity(EXTI_PORT_GPIOC,EXTI_SENSITIVITY_RISE_ONLY);
+  
+}
+
+
