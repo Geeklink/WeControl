@@ -96,10 +96,12 @@ void LED_Flash(void)
 
 void main(void)
 {
-    
+    unsigned char firstsend = 1;
+  
     CLK_HSICmd(ENABLE); //enable HSI
 
     sim();
+    
     
     CLK_HSIPrescalerConfig(CLK_PRESCALER_HSIDIV1);//0 PRESCALER£¬16MHZ
     
@@ -132,6 +134,15 @@ void main(void)
         {
             Tim4Counter = 0;
             LED_Flash();
+            if(firstsend != 0)
+            {
+                firstsend ++;
+                if(firstsend == 15)
+                {
+                    firstsend = 0;
+                    Send_Type();
+                }
+            }
         }
                
     }    

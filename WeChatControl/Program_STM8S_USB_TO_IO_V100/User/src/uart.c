@@ -45,58 +45,68 @@ void Uart_RxPacket(void)
             uatr_rx_count = 0;
             Uart_Rx_Buf[0] = 0;
             
-            if((Uart_Rx_Buf[3]== 4) && (buf[0] == 'S'))
+            switch(Uart_Rx_Buf[DataCMD])
             {
-                if(memcmp("STOP",buf,4) == 0)
+                case Ask_Type:
                 {
-                    FlashFlag = 0;
+                    Send_Type();
+                    break;
                 }
-            }
-            else if((Uart_Rx_Buf[3]== 5) && (buf[0] == 'F'))
-            {
-                if(memcmp("FLASH",buf,5) == 0)
+                case Data_Type:
                 {
-                    FlashFlag = 1;
-                }
-            }
-            else if((Uart_Rx_Buf[3]== 6) && (buf[5] == 'N'))
-            {
-                if(memcmp("LED1ON",buf,6) == 0)
-                {
-                    LED1_ON;
-                }
-                if(memcmp("LED2ON",buf,6) == 0)
-                {
-                    LED2_ON;
-                }
-                if(memcmp("LED3ON",buf,6) == 0)
-                {
-                    LED3_ON;
-                }   
-                FlashFlag = 0;
-                
-            }
-            else 
-            {
-                if((Uart_Rx_Buf[3]== 7) && (buf[5] == 'F'))
-                {
-                    if(memcmp("LED1OFF",buf,7) == 0)
+                    if((Uart_Rx_Buf[3]== 4) && (buf[DataBase] == 'S'))
                     {
-                        LED1_OFF;
+                        if(memcmp("STOP",buf,4) == 0)
+                        {
+                            FlashFlag = 0;
+                        }
                     }
-                    if(memcmp("LED2OFF",buf,7) == 0)
+                    else if((Uart_Rx_Buf[3]== 5) && (buf[DataBase] == 'F'))
                     {
-                        LED2_OFF;
+                        if(memcmp("FLASH",buf,5) == 0)
+                        {
+                            FlashFlag = 1;
+                        }
                     }
-                    if(memcmp("LED3OFF",buf,7) == 0)
+                    else 
                     {
-                        LED3_OFF;
-                    }           
-                }
-                FlashFlag = 0;
-            }  
+                        if((Uart_Rx_Buf[3]== 7) && (buf[DataBase] == 'F'))
+                        {
+                            if(memcmp("LED1OFF",buf,7) == 0)
+                            {
+                                LED1_OFF;
+                            }
+                            if(memcmp("LED2OFF",buf,7) == 0)
+                            {
+                                LED2_OFF;
+                            }
+                            if(memcmp("LED3OFF",buf,7) == 0)
+                            {
+                                LED3_OFF;
+                            }           
+                        }
+                        FlashFlag = 0;
+                    } 
+                    break;
+                }            
+                default :break;
+            }
+             
         }        
     }
+}
+
+void Send_Type(void)
+{
+    UART1_SendByte(HEAD_ONE);
+    UART1_SendByte(HEAD_TWO);
+    UART1_SendByte(DATA_LENH);
+    UART1_SendByte(3);
+    UART1_SendByte(Answer_Type);
+    UART1_SendByte(0);
+    UART1_SendByte(0);
+    UART1_SendByte(END_ONE);
+    UART1_SendByte(END_TWO);  
 }
 
 void Deal_Key(void)
@@ -110,9 +120,9 @@ void Deal_Key(void)
         UART1_SendByte(HEAD_ONE);
         UART1_SendByte(HEAD_TWO);
         UART1_SendByte(DATA_LENH);
-        UART1_SendByte(DATA_LENL);
-        
-        UART1_Send(buf,DATA_LENL);
+        UART1_SendByte(13);
+        UART1_SendByte(Data_Type);
+        UART1_Send(buf,12);
         
         UART1_SendByte(END_ONE);
         UART1_SendByte(END_TWO);
