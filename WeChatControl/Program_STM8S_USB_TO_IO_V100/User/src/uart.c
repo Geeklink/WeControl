@@ -38,9 +38,9 @@ void Uart_RxPacket(void)
         Rec_OK = 0;
         
         {
-            for(i=0;i<uatr_rx_count-6;i++)
+            for(i=0;i<uatr_rx_count-7;i++)
             {
-                buf[i] = Uart_Rx_Buf[i+4];
+                buf[i] = Uart_Rx_Buf[i+DataBase];
             }
             uatr_rx_count = 0;
             Uart_Rx_Buf[0] = 0;
@@ -54,14 +54,14 @@ void Uart_RxPacket(void)
                 }
                 case Data_Type:
                 {
-                    if((Uart_Rx_Buf[3]== 4) && (buf[DataBase] == 'S'))
+                    if((Uart_Rx_Buf[DataLen]== 5) && (Uart_Rx_Buf[DataBase] == 'S'))
                     {
                         if(memcmp("STOP",buf,4) == 0)
                         {
                             FlashFlag = 0;
                         }
                     }
-                    else if((Uart_Rx_Buf[3]== 5) && (buf[DataBase] == 'F'))
+                    else if((Uart_Rx_Buf[DataLen]== 6) && (Uart_Rx_Buf[DataBase] == 'F'))
                     {
                         if(memcmp("FLASH",buf,5) == 0)
                         {
@@ -70,21 +70,6 @@ void Uart_RxPacket(void)
                     }
                     else 
                     {
-                        if((Uart_Rx_Buf[3]== 7) && (buf[DataBase] == 'F'))
-                        {
-                            if(memcmp("LED1OFF",buf,7) == 0)
-                            {
-                                LED1_OFF;
-                            }
-                            if(memcmp("LED2OFF",buf,7) == 0)
-                            {
-                                LED2_OFF;
-                            }
-                            if(memcmp("LED3OFF",buf,7) == 0)
-                            {
-                                LED3_OFF;
-                            }           
-                        }
                         FlashFlag = 0;
                     } 
                     break;
@@ -152,7 +137,7 @@ INTERRUPT_HANDLER(UART1_RX_IRQHandler,18)
         uatr_rx_count = 0;
     }
     
-    if(uatr_rx_count > 6)
+    if(uatr_rx_count > 7)
     {
         if((Uart_Rx_Buf[uatr_rx_count - 2] == END_ONE) && (Uart_Rx_Buf[uatr_rx_count - 1] == END_TWO))
         {
